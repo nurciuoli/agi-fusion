@@ -20,6 +20,14 @@ def generate(prompt,stream=True):
     for part in o.generate('llama3', prompt, stream=stream):
         print(part['response'], end='', flush=True)
 
+#generate func
+def generate_and_ret(prompt):
+    string_temp=''
+    for part in o.generate('llama3', prompt, stream=False):
+        string_temp+=part['response']
+    print(string_temp)
+    return string_temp
+
 #generate with image func
 def generate_w_images(prompt,images,stream=True):
     for response in o.generate('llava', prompt, images=images, stream=stream):

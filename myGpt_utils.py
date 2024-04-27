@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 from PIL import Image
 from io import BytesIO
 from openai import OpenAI
+from myLlama import generate
 
 # Load environment variables
 load_dotenv()
@@ -46,6 +47,7 @@ def wait_on_run(worker, run, thread_id, print_flag=True):
             tool_calls = run.required_action.submit_tool_outputs.tool_calls
             # Process tool actions
             run = go_through_tool_actions(tool_calls, worker, run.id, thread_id, True)
+            break
 
         # Sleep briefly to avoid spamming the API with requests
         time.sleep(0.1)
@@ -179,6 +181,17 @@ def go_through_tool_actions(tool_calls, worker, run_id, thread_id, print_flag):
                 tool_output_string += ' \n'
             print(tool_output_string)
             tool_output_list.append({"tool_call_id": tool_call.id,"output": tool_output_string})
-    # Submit the collected tool outputs and return the run object
+
+        elif function_name == 'instruct_help':
+            tool_output_string = ''
+            if print_flag:
+                print('===============================================================')
+                print('                               HELPING')
+                print('===============================================================')
+            instructions = json.loads(json.loads(tool_call.json())['function']['arguments'])['instructions']
+            generate(instructions)
+            tool_output_list.append({"tool_call_id": tool_call.id,"output": "content has been generated"})
+
+    ## Submit the collected tool outputs and return the run object
     run = client.beta.threads.runs.submit_tool_outputs(thread_id=thread_id, run_id=run_id, tool_outputs=tool_output_list)
     return run
