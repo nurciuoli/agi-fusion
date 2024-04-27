@@ -152,10 +152,13 @@ def go_through_tool_actions(tool_calls, worker, run_id, thread_id, print_flag):
                 print('                         GETTING HELP')
                 print('===============================================================')
             tasks =json.loads(json.loads(tool_call.json())['function']['arguments'])['tasks']
-            help_resp = get_help(worker, tasks)
             for task in tasks:
-                print(task['instructions'])
-            tool_output_list.append({"tool_call_id": tool_call.id,"output": str(help_resp)})
+                instructions=task['instructions']
+                print(f'Instructions: {instructions}')
+                print('===============================================================')
+                generate(instructions)
+                print('\n')
+            tool_output_list.append({"tool_call_id": tool_call.id,"output": "content generated"})
         elif function_name == 'file_upload':
             if print_flag:
                 print('===============================================================')
@@ -189,8 +192,9 @@ def go_through_tool_actions(tool_calls, worker, run_id, thread_id, print_flag):
                 print('                               HELPING')
                 print('===============================================================')
             instructions = json.loads(json.loads(tool_call.json())['function']['arguments'])['instructions']
+            print(f'Instructions: {instructions}')
             generate(instructions)
-            tool_output_list.append({"tool_call_id": tool_call.id,"output": "content has been generated"})
+            tool_output_list.append({"tool_call_id": tool_call.id,"output": "content generated"})
 
     ## Submit the collected tool outputs and return the run object
     run = client.beta.threads.runs.submit_tool_outputs(thread_id=thread_id, run_id=run_id, tool_outputs=tool_output_list)

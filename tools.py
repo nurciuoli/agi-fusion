@@ -32,7 +32,6 @@ get_help = {
     "parameters": {
         "type": "object",
         "properties": {
-            "objective": {"type": "string"},
             "tasks": {
                 "type": "array",
                 "description": "An array of individual tasks to accomplish the overall objective, and an assignment",
@@ -41,17 +40,13 @@ get_help = {
                     "properties": {
                         "instructions": {"type": "string",
                                          "description":"a detailed prompt describing exactly what the worker should do and any context needed"},
-                        "worker_type": {
-                            "type": "string",
-                            "enum": ["SOFTWAREENGINEER", "WRITER"],
-                        },
                         "choices": {"type": "array", "items": {"type": "string"}},
                     },
-                    "required": ["instructions","worker_type"],
+                    "required": ["instructions"],
                 },
             },
         },
-        "required": ["objective", "tasks"],
+        "required": ["tasks"],
     },
 }
 
