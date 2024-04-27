@@ -58,15 +58,13 @@ class GptAgent:
         # Represent the Worker as a string
         return f"Worker(Name: {self.name}, Role Context: {self.role_context})"
 
-    def create_thread_and_run(self, user_input):
-        # Create a new thread and submit a message
-        self.thread = client.beta.threads.create()
-        self.thread_id = self.thread.id
+    def chat(self, user_input):
+        if self.thread is None:
+            # Create a new thread and submit a message
+            self.thread = client.beta.threads.create()
+            self.thread_id = self.thread.id
         self.submit_message(self.thread_id, user_input)
-
-    def continue_thread(self, user_input):
-        # Submit a message to continue an existing thread
-        self.submit_message(self.thread_id, user_input)
+        
 
     # Internal method for submitting messages, printing prompts, and waiting for responses
     def submit_message(self, thread_id, user_message):
